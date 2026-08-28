@@ -1,0 +1,441 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>PROJECT_PANGUIN_30 // 熊熊與企鵝的秘密檔案</title>
+<style>
+:root {
+  --bg: #030611; --panel: #09101f; --line: #00f0ff; --pink: #ff2a8d;
+  --gold: #ffe66d; --text: #e0f7fc; --muted: #52798e; --ok: #50ffb1; --bad: #ff4769;
+}
+*, *:before, *:after { 
+  box-sizing: border-box !important; 
+  -webkit-tap-highlight-color: transparent; 
+}
+html, body {
+  margin: 0; padding: 0; width: 100%; min-height: 100vh;
+  background: radial-gradient(circle at 50% 0, #0d1b2e 0%, #030611 60%, #000 100%);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Consolas, "Noto Sans TC", monospace;
+  color: var(--text); overflow-x: hidden;
+}
+body::before {
+  content: ""; position: fixed; inset: 0; pointer-events: none; opacity: 0.05;
+  background: repeating-linear-gradient(0deg, transparent 0 2px, #fff 3px); mix-blend-mode: screen; z-index: 10;
+}
+.wrap { 
+  width: 100%; 
+  max-width: 600px; 
+  margin: 0 auto; 
+  padding: 12px 12px 30px 12px; 
+}
+.header {
+  width: 100%;
+  border: 1px solid #143848; background: #060d17; padding: 10px 12px;
+  display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--muted);
+  border-radius: 4px; margin-bottom: 12px;
+}
+.brand { color: var(--line); font-weight: bold; letter-spacing: 1px; }
+.status { color: var(--ok); font-weight: bold; }
+.screen {
+  width: 100%;
+  border: 1px solid #1b4e5b; background: rgba(5, 12, 22, 0.95);
+  box-shadow: 0 0 20px rgba(0, 240, 255, 0.08), inset 0 0 15px rgba(0, 240, 255, 0.04);
+  padding: 16px; min-height: 75vh; border-radius: 6px; position: relative;
+  display: flex; flex-direction: column; justify-content: space-between;
+}
+h1 { font-size: clamp(20px, 5.5vw, 32px); letter-spacing: 1px; margin: 8px 0; text-shadow: 0 0 12px rgba(0, 240, 255, 0.5); word-break: break-word; }
+h2 { color: var(--line); letter-spacing: 1px; margin-top: 0; font-size: 17px; }
+.kicker { color: var(--pink); font-size: 11px; letter-spacing: 1px; font-weight: bold; }
+.info-box { 
+  width: 100%; 
+  font-size: 12px; 
+  line-height: 1.6; 
+  color: #8ec3cf; 
+  background: rgba(0,0,0,0.4); 
+  padding: 12px; 
+  border: 1px dashed #174251; 
+  border-radius: 4px; 
+  margin: 10px 0;
+}
+.info-box div { word-break: break-all; }
+p { line-height: 1.5; margin: 8px 0; font-size: 13.5px; }
+.muted { color: var(--muted); font-size: 12px; }
+.btn {
+  font: inherit; font-size: 14px; font-weight: bold; color: var(--text); background: #081726; border: 1px solid var(--line);
+  padding: 12px 14px; cursor: pointer; margin: 6px 0; transition: all 0.2s ease; display: block; width: 100%;
+  text-align: center; border-radius: 4px; -webkit-appearance: none;
+}
+.btn:active { background: #0f2c42; transform: scale(0.98); }
+.btn.pink { border-color: var(--pink); color: #fff; background: rgba(255, 42, 141, 0.1); }
+.btn.pink:active { background: rgba(255, 42, 141, 0.3); }
+.btn.ok { border-color: var(--ok); color: var(--ok); background: rgba(80, 255, 177, 0.05); }
+.btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
+.options { display: flex; flex-direction: column; gap: 8px; margin: 12px 0; width: 100%; }
+.option { text-align: left; width: 100%; margin: 0; border-color: #1e4d5c; font-size: 13px; line-height: 1.4; padding: 10px; }
+.input { width: 100%; background: #02060c; border: 1px solid #235463; color: var(--text); padding: 12px; font-size: 14px; outline: none; border-radius: 4px; -webkit-appearance: none; }
+.input:focus { border-color: var(--line); box-shadow: 0 0 10px rgba(0, 240, 255, 0.3); }
+.feedback { margin-top: 12px; padding: 10px; border-left: 4px solid var(--line); background: #081a26; animation: fadeIn 0.3s; font-size: 12.5px; line-height: 1.4; width: 100%; }
+.feedback.bad { border-color: var(--bad); color: #ffb3c1; background: #1a080d; }
+.feedback.good { border-color: var(--ok); color: #c0ffd5; background: #081a12; }
+.terminal { background: #02050b; border: 1px solid #163e4a; padding: 10px; color: #8ee2ee; font-size: 11.5px; margin: 10px 0; border-radius: 4px; width: 100%; }
+.glitch { animation: glitch 1.2s infinite steps(2, end); }
+@keyframes glitch { 0%,100%{transform:none} 20%{transform:translate(2px,-1px)} 40%{transform:translate(-2px,1px)} }
+@keyframes fadeIn { from{opacity:0;transform:translateY(5px)} to{opacity:1;transform:translateY(0)} }
+.chat-box { display: flex; flex-direction: column; gap: 8px; margin: 12px 0; width: 100%; }
+.chat-msg { padding: 8px 10px; border-radius: 6px; max-width: 90%; line-height: 1.4; font-size: 12.5px; }
+.chat-left { background: #0e2233; align-self: flex-start; border: 1px solid #1b495e; color: #a5e3f0; }
+.chat-right { background: #2b0e20; align-self: flex-end; border: 1px solid #5e1b43; color: #f0a5ce; }
+.heart-rate { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 15px 0; background: #040a14; padding: 12px; border: 1px solid #163c48; border-radius: 4px; width: 100%; }
+.heart-icon { font-size: 32px; color: var(--pink); animation: pulse 0.8s infinite alternate; }
+@keyframes pulse { from{transform:scale(1)} to{transform:scale(1.2)} }
+.timeline-list { display: flex; flex-direction: column; gap: 6px; margin: 10px 0; width: 100%; }
+.timeline-item { background: #081a26; border: 1px dashed #1e4d5c; padding: 8px 10px; font-size: 11.5px; border-radius: 4px; width: 100%; }
+.btn-group { display: flex; gap: 8px; margin-top: 10px; width: 100%; }
+.btn-group .btn { flex: 1; margin: 0; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="header">
+    <span class="brand">PROJECT_PANGUIN // V2026</span>
+    <span class="status" id="status">SYSTEM READY</span>
+  </div>
+  <main class="screen" id="app"></main>
+</div>
+
+<script>
+var app, statusEl, clickCount = 0;
+
+function setStatus(text, color) {
+  if (statusEl) {
+    statusEl.textContent = text;
+    statusEl.style.color = color || 'var(--ok)';
+  }
+}
+
+function render(html) { 
+  if (app) app.innerHTML = html; 
+  window.scrollTo(0, 0);
+}
+
+// --- START PAGE ---
+function start() {
+  setStatus("ONLINE", "var(--ok)");
+  render(
+    '<div>' +
+      '<div class="kicker">ENCRYPTED TRANSMISSION // 2026 SPECIAL</div>' +
+      '<h1 class="glitch">PANGUIN30_PROTOCOL</h1>' +
+      '<div class="info-box">' +
+        '<div>TARGET: 熊熊的未婚夫</div>' +
+        '<div>SENDER: 企鵝的未婚妻</div>' +
+        '<div>SECURITY CLEARANCE: LEVEL 5</div>' +
+        '<div>OBJECTIVE: UNLOCK THE 30TH CORE</div>' +
+      '</div>' +
+      '<p>偵測到來自「企鵝的未婚妻」的加密封包。這是一份專屬於你哋雙方嘅系統測試驗證。</p>' +
+      '<p class="muted">備註：請確保附近有熊熊陪同，或準備好接受高濃度的回憶連線。</p>' +
+    '</div>' +
+    '<div style="margin-top:15px;">' +
+      '<button class="btn" onclick="level1()">[ 進入系統解密 ]</button>' +
+      '<button class="btn pink" onclick="inspectCore()">[ 檢視系統核心 ]</button>' +
+    '</div>'
+  );
+}
+
+function inspectCore() {
+  render(
+    '<div>' +
+      '<div class="kicker">SYSTEM INFRASTRUCTURE</div>' +
+      '<h2>核心數據分析</h2>' +
+      '<div class="terminal">' +
+        '> 玩家（企鵝）：玩拜拜肉 + Talk Shit + 忠誠大狗 100%<br><br>' +
+        '> 寄件人（熊熊）：貓系 + 咬咬技能 + 偶爾內耗 100%<br><br>' +
+        '> 當前關係狀態：未婚夫妻 (ENGAGED)<br><br>' +
+        '> 核心連結：無可替代' +
+      '</div>' +
+    '</div>' +
+    '<div>' +
+      '<button class="btn" onclick="start()">[ 返回主選單 ]</button>' +
+    '</div>'
+  );
+}
+
+// --- LEVEL 1: 語音情境密碼 ---
+function level1() {
+  setStatus("STAGE 01: VOICE CHECK", "var(--line)");
+  render(
+    '<div>' +
+      '<div class="kicker">LEVEL 01 // 語音情境密碼</div>' +
+      '<h2>熊熊的招式辨識</h2>' +
+      '<p>當熊熊突然視察附近無人，或者用眼神望住你嘅時候，以下哪一個行為解讀是最準確的？</p>' +
+      '<div class="options">' +
+        '<button class="btn option" onclick="ans1(false, \'錯誤。熊熊並非要進行商業握手。\')">A. 想跟你進行嚴肅的商務握手</button>' +
+        '<button class="btn option" onclick="ans1(true, \'驗證成功！這是完美的熊熊解讀。\')">B. 準備要咬一口 / 討抱抱</button>' +
+        '<button class="btn option" onclick="ans1(false, \'系統錯誤。熊熊很少會主動討論微積分。\')">C. 示意你講解高等數學題目</button>' +
+        '<button class="btn option" onclick="ans1(false, \'匹配失敗。這個指令不符合熊熊行為學。\')">D. 提醒你該去清理貓砂了</button>' +
+      '</div>' +
+      '<div id="fb"></div>' +
+    '</div>'
+  );
+}
+
+function ans1(correct, msg) {
+  var options = document.querySelectorAll('.option');
+  for (var i = 0; i < options.length; i++) { options[i].disabled = true; }
+  var fb = document.getElementById('fb');
+  if (correct) {
+    fb.className = 'feedback good';
+    fb.innerHTML = msg + '<br><button class="btn ok" style="margin-top:10px;" onclick="level2()">[ 進入 Level 2 ]</button>';
+  } else {
+    fb.className = 'feedback bad';
+    fb.innerHTML = msg + '<br><button class="btn pink" style="margin-top:10px;" onclick="level1()">[ 重試 ]</button>';
+  }
+}
+
+// --- LEVEL 2: 日常對話鏈重構 ---
+function level2() {
+  setStatus("STAGE 02: CHAT LOGS", "var(--pink)");
+  render(
+    '<div>' +
+      '<div class="kicker">LEVEL 02 // 日常對話鏈重構</div>' +
+      '<h2>日常對話鏈重構</h2>' +
+      '<p>系統擷取到一段兩人的經典日常對話片段，請填入最常出現的關鍵回應：</p>' +
+      '<div class="chat-box">' +
+        '<div class="chat-msg chat-right">企鵝：「食咩好呢呀？」</div>' +
+        '<div class="chat-msg chat-left">熊熊：「（以下何者最符合預設反應？）」</div>' +
+      '</div>' +
+      '<div class="options">' +
+        '<button class="btn option" onclick="ans2(false)">A. 「隨便啦，我食微波爐便當就得。」</button>' +
+        '<button class="btn option" onclick="ans2(true)">B. 「打邊爐好無？」</button>' +
+        '<button class="btn option" onclick="ans2(false)">C. 「請參考我們 2020.12.23 簽署的排程協定。」</button>' +
+      '</div>' +
+      '<div id="fb"></div>' +
+    '</div>'
+  );
+}
+
+function ans2(ok) {
+  var options = document.querySelectorAll('.option');
+  for (var i = 0; i < options.length; i++) { options[i].disabled = true; }
+  var fb = document.getElementById('fb');
+  if (ok) {
+    fb.className = 'feedback good';
+    fb.innerHTML = '對話鏈匹配成功！系統確認該回應符合 100% 正牌記憶。<br><button class="btn ok" style="margin-top:10px;" onclick="level3()">[ 進入 Level 3 ]</button>';
+  } else {
+    fb.className = 'feedback bad';
+    fb.innerHTML = '數據不符！這不是會發生的對話。<br><button class="btn pink" style="margin-top:10px;" onclick="level2()">[ 重試 ]</button>';
+  }
+}
+
+// --- LEVEL 3: 時間軸路線重構 ---
+var fragments = [
+  { id: 1, text: "荔景涼亭" },
+  { id: 2, text: "如心" },
+  { id: 3, text: "海洋公園" },
+  { id: 4, text: "屯門公園" },
+  { id: 5, text: "台南高雄" },
+  { id: 6, text: "牧羊少年" },
+  { id: 7, text: "普慶自助大餐" }
+];
+var displayOrder = [];
+var userOrder = [];
+
+function shuffle(array) {
+  var arr = array.slice();
+  for (var i = arr.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var temp = arr[i];
+    arr[i] = arr[j];
+    arr[j] = temp;
+  }
+  return arr;
+}
+
+function level3() {
+  setStatus("STAGE 03: TIMELINE", "var(--gold)");
+  userOrder = [];
+  displayOrder = shuffle(fragments);
+  renderTimeline();
+}
+
+function renderTimeline() {
+  var optionsHtml = '';
+  for (var i = 0; i < displayOrder.length; i++) {
+    var f = displayOrder[i];
+    var isSelected = userOrder.indexOf(f.id) !== -1;
+    optionsHtml += '<button class="btn option" ' + (isSelected ? 'disabled' : '') + ' onclick="selectFragment(' + f.id + ')">' +
+      (isSelected ? '[已選擇] ' : '+ ') + f.text +
+    '</button>';
+  }
+
+  var selectedHtml = '';
+  for (var j = 0; j < userOrder.length; j++) {
+    var item = getFragmentById(userOrder[j]);
+    selectedHtml += '<div class="timeline-item">STEP ' + (j + 1) + ': ' + item.text + '</div>';
+  }
+
+  render(
+    '<div>' +
+      '<div class="kicker">LEVEL 03 // 時間軸路線重構</div>' +
+      '<h2>2020-2026 生日地點足跡排序</h2>' +
+      '<p>請按年份順序（2020 至 2026 年）點擊組裝正確的生日地點：</p>' +
+      '<div class="timeline-list">' + (selectedHtml || '<p class="muted">[ 請點擊下方選項組裝... ]</p>') + '</div>' +
+      '<div class="options">' + optionsHtml + '</div>' +
+      '<div class="btn-group">' +
+        '<button class="btn pink" onclick="resetTimeline()">[ 重置 ]</button>' +
+        '<button class="btn ok" onclick="verifyTimeline()">[ 驗證 ]</button>' +
+      '</div>' +
+      '<div id="fb"></div>' +
+    '</div>'
+  );
+}
+
+function getFragmentById(id) {
+  for (var i = 0; i < fragments.length; i++) {
+    if (fragments[i].id === id) return fragments[i];
+  }
+  return null;
+}
+
+function selectFragment(id) {
+  if (userOrder.indexOf(id) === -1) {
+    userOrder.push(id);
+    renderTimeline();
+  }
+}
+
+function resetTimeline() {
+  userOrder = [];
+  displayOrder = shuffle(fragments);
+  renderTimeline();
+}
+
+function verifyTimeline() {
+  var fb = document.getElementById('fb');
+  if (userOrder.length < fragments.length) {
+    fb.className = 'feedback bad';
+    fb.textContent = '請先選擇完整 ' + fragments.length + ' 個生日地點！';
+    return;
+  }
+  
+  var isCorrect = true;
+  for (var i = 0; i < userOrder.length; i++) {
+    if (userOrder[i] !== i + 1) {
+      isCorrect = false;
+      break;
+    }
+  }
+
+  if (isCorrect) {
+    fb.className = 'feedback good';
+    fb.innerHTML = '時間軸校正完美！數據完整無缺。<br><button class="btn ok" style="margin-top:10px;" onclick="level4()">[ 進入 Level 4 ]</button>';
+  } else {
+    fb.className = 'feedback bad';
+    fb.innerHTML = '時間軸順序有誤！請重新嘗試。<br><button class="btn pink" style="margin-top:10px;" onclick="resetTimeline()">[ 重置重試 ]</button>';
+  }
+}
+
+// --- LEVEL 4: 雙人同步率測試 ---
+function level4() {
+  setStatus("STAGE 04: SYNC TEST", "var(--pink)");
+  clickCount = 0;
+  render(
+    '<div>' +
+      '<div class="kicker">LEVEL 04 // 雙人同步率測試</div>' +
+      '<h2>心律與默契充能</h2>' +
+      '<p>請連續點擊下方的心臟，將心律同步率提升至 100%！</p>' +
+      '<div class="heart-rate">' +
+        '<div class="heart-icon">❤️</div>' +
+        '<div>' +
+          '<div style="font-size:26px; font-weight:bold; color:var(--line);" id="syncVal">0%</div>' +
+          '<div class="muted">SYSTEM SYNC STATUS</div>' +
+        '</div>' +
+      '</div>' +
+      '<button class="btn pink" onclick="chargeSync()">[ 注入能量 (PULSE) ]</button>' +
+      '<div id="fb"></div>' +
+    '</div>'
+  );
+}
+
+function chargeSync() {
+  clickCount += 20;
+  if (clickCount > 100) clickCount = 100;
+  var syncVal = document.getElementById('syncVal');
+  if (syncVal) syncVal.textContent = clickCount + '%';
+  
+  if (clickCount >= 100) {
+    var fb = document.getElementById('fb');
+    if (fb) {
+      fb.className = 'feedback good';
+      fb.innerHTML = 'SYNC COMPLETE! 默契同步率達 100%！<br><button class="btn ok" style="margin-top:10px;" onclick="level5()">[ 進入 Level 5 ]</button>';
+    }
+  }
+}
+
+// --- LEVEL 5: 未來願望寫入 ---
+function level5() {
+  setStatus("STAGE 05: FUTURE ARCHIVE", "var(--line)");
+  render(
+    '<div>' +
+      '<div class="kicker">LEVEL 05 // 未來協定</div>' +
+      '<h2>寫入 2026/2027 未來願望</h2>' +
+      '<p><b>在接下來的日子裡，你最想跟熊熊一起完成的一件事是什麼？</b></p>' +
+      '<input type="text" id="futureWish" class="input" placeholder="例如：去旅行 / 食某間餐廳 / 買嘢... " />' +
+      '<button class="btn pink" style="margin-top:12px;" onclick="saveWish()">[ 寫入未來磁區 ]</button>' +
+      '<div id="fb"></div>' +
+    '</div>'
+  );
+}
+
+function saveWish() {
+  var input = document.getElementById('futureWish');
+  var val = input ? input.value.trim() : '';
+  var fb = document.getElementById('fb');
+  if (!val) {
+    if (fb) {
+      fb.className = 'feedback bad';
+      fb.textContent = '請輸入具體的願望內容！';
+    }
+    return;
+  }
+  if (fb) {
+    fb.className = 'feedback good';
+    fb.innerHTML = '已成功將願望「<b>' + val + '</b>」寫入企鵝與熊熊的共同未來檔案。<br><button class="btn ok" style="margin-top:10px;" onclick="finalPage()">[ 讀取終極生日檔案 ]</button>';
+  }
+}
+
+// --- FINAL PAGE ---
+function finalPage() {
+  setStatus("ALL CLEAR", "var(--ok)");
+  render(
+    '<div style="text-align:center;">' +
+      '<div class="kicker">ACCESS GRANTED // FINAL TRANSMISSION</div>' +
+      '<h1 class="glitch" style="color:var(--pink);">HAPPY BIRTHDAY!</h1>' +
+      '<div class="terminal" style="text-align:left; line-height:1.7;">' +
+        '> RECOVERY COMPLETE.<br>' +
+        '> 玩家 : 熊熊的未婚夫<br>' +
+        '> 寄件人 : 企鵝的未婚妻<br>' +
+        '> SINCE: 2020.12.23 → FOREVER' +
+      '</div>' +
+      '<div style="line-height:1.7; text-align:left; margin:14px 0; background:rgba(255,42,141,0.05); padding:14px; border:1px solid rgba(255,42,141,0.2); border-radius:4px; font-size:13px;">' +
+        '<p><b>企鵝先生：</b></p>' +
+        '<p>恭喜你順利過關！這代表你的系統記憶體依然非常健康，而且 100% 屬於熊熊。</p>' +
+        '<p>從 2020 年至今，是我們一起經歷的第7個生日足跡。這些年有甜蜜的時光，無論是打邊爐、Camping、旅遊，還是平平淡淡地互相捏捏腩腩同拜拜肉、互相陪著對方高低起跌，這些都是系統裡最珍貴的 Source Code。</p>' +
+        '<p>謝謝你一直以來充當金毛大狗狗般的溫暖存在，包容熊熊的小情緒與內耗。</p>' +
+        '<p><b>生日快樂 B！希望未來的每一個 Protocol，都有你、我同天父一起繼續解鎖。亦都祝願我們順利完成2027 BIG PROJECT，一齊一步一步組織一個家❤️</b></p>' +
+        '<p style="text-align:right; margin-top:14px; font-weight:bold;">熊熊小姐上</p>' +
+      '</div>' +
+      '<button class="btn ok" onclick="start()">[ 重頭體驗 (REBOOT) ]</button>' +
+    '</div>'
+  );
+}
+
+window.onload = function() {
+  app = document.getElementById('app');
+  statusEl = document.getElementById('status');
+  start();
+};
+</script>
+</body>
+</html>
