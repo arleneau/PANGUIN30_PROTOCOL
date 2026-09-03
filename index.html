@@ -260,6 +260,35 @@ p { line-height: 1.6; margin: 10px 0; font-size: 14px; }
 .captcha-item.selected::after {
   content: "✓"; position: absolute; top: 4px; right: 6px; color: var(--ok); font-weight: bold; font-size: 14px;
 }
+  /* LEVEL 05 CAPTCHA 九宮格圖片樣式 */
+.captcha-header { font-size: 13px; margin-bottom: 10px; color: var(--line); text-align: center; }
+.captcha-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 12px 0;
+}
+.captcha-item {
+  aspect-ratio: 1; background: rgba(8, 23, 38, 0.8); border: 2px solid rgba(0, 243, 255, 0.3);
+  border-radius: 8px; cursor: pointer; transition: all 0.25s ease; position: relative;
+  overflow: hidden;
+}
+.captcha-item img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  transition: transform 0.3s ease;
+}
+.captcha-item:active img { transform: scale(1.05); }
+.captcha-item.selected {
+  border-color: var(--ok); box-shadow: 0 0 15px rgba(0, 255, 157, 0.6);
+}
+.captcha-item.selected::after {
+  content: "✓"; position: absolute; top: 4px; right: 6px; color: #000;
+  background: var(--ok); width: 22px; height: 22px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: bold; font-size: 13px; box-shadow: 0 0 8px var(--ok);
+  z-index: 2;
+}
+.captcha-item.selected::before {
+  content: ""; position: absolute; inset: 0;
+  background: rgba(0, 255, 157, 0.2); z-index: 1;
+}
 </style>
 </head>
 <body>
@@ -594,7 +623,7 @@ function chargeSync() {
   }
 }
 
-// --- LEVEL 05: CAPTCHA 9宮格相片驗證 (已修復語音錯誤) ---
+// --- LEVEL 05: CAPTCHA 9宮格相片驗證 ---
 var captchaPhotos = [
   { id: 0, src: 'T1.jpg', isTarget: true },
   { id: 1, src: 'F1.jpg', isTarget: false },
@@ -620,8 +649,7 @@ function renderCaptcha() {
     var p = captchaPhotos[i];
     var isSel = captchaSelected.indexOf(p.id) !== -1;
     gridHtml += '<div class="captcha-item ' + (isSel ? 'selected' : '') + '" onclick="toggleCaptcha(' + p.id + ')">' +
-      '<div>' + p.icon + '</div>' +
-      '<span>' + p.title + '</span>' +
+      '<img src="' + p.src + '" alt="memory" />' +
     '</div>';
   }
 
@@ -630,7 +658,7 @@ function renderCaptcha() {
       '<div class="kicker">LEVEL 05 // HUMAN VERIFICATION</div>' +
       '<h2>記憶 CAPTCHA 驗證 🧩</h2>' +
       '<div class="captcha-header">' +
-        '<b>請選取所有包含「甜蜜記憶」的項目：</b>' +
+        '<b>請選取所有包含「甜蜜記憶」的圖片：</b>' +
       '</div>' +
       '<div class="captcha-grid">' + gridHtml + '</div>' +
       '<button class="btn ok" onclick="verifyCaptcha()">[ 提交驗證 (VERIFY) ]</button>' +
@@ -668,7 +696,6 @@ function verifyCaptcha() {
     fb.innerHTML = '驗證失敗！選取項目包含無關物品或遺漏了甜蜜記憶，請重新選擇。<br><button class="btn pink" style="margin-top:10px;" onclick="level5()">[ 重試驗證 ]</button>';
   }
 }
-
 // --- LEVEL 6 ---
 function level6() {
   setStatus("STAGE 06", "var(--line)");
