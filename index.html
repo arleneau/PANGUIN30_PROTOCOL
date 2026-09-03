@@ -576,10 +576,84 @@ function chargeSync() {
     }
   }
 }
+// --- LEVEL 05: CAPTCHA 9宮格相片驗證 ---
+var captchaPhotos = [
+  { id: 0, icon: "🍲", title: "熱騰騰邊爐", isTarget: true },
+  { id: 1, icon: "🥦", title: "苦瓜炒蛋", isTarget: false },
+  { id: 2, icon: "🐻", title: "熊熊討抱抱", isTarget: true },
+  { id: 3, icon: "🐧", title: "企鵝捏腩腩", isTarget: true },
+  { id: 4, icon: "🌵", title: "仙人掌植栽", isTarget: false },
+  { id: 5, icon: "✈️", title: "台南高雄旅行", isTarget: true },
+  { id: 6, icon: "📄", title: "高等數學試卷", isTarget: false },
+  { id: 7, icon: "💍", title: "求婚戒指", isTarget: true },
+  { id: 8, icon: "🧯", title: "滅火器", isTarget: false }
+];
+var captchaSelected = [];
 
-// --- LEVEL 5 ---
 function level5() {
-  setStatus("STAGE 05", "var(--line)");
+  setStatus("STAGE 05: VERIFICATION", "var(--line)");
+  captchaSelected = [];
+  renderCaptcha();
+}
+
+function renderCaptcha() {
+  var gridHtml = '';
+  for (var i = 0; i < captchaPhotos.length; i++) {
+    var p = captchaPhotos[i];
+    var isSel = captchaSelected.indexOf(p.id) !== -1;
+    gridHtml += '<div class="captcha-item ' + (isSel ? 'selected' : '') + '" onclick="toggleCaptcha(' + p.id + ')">' +
+      '<div>' + p.icon + '</div>' +
+      '<span>' + p.title + '</span>' +
+    '</div>';
+  }
+
+  render(
+    '<div>' +
+      '<div class="kicker">LEVEL 05 // HUMAN VERIFICATION</div>' +
+      '<h2>記憶 CAPTCHA 驗證 🧩</h2>' +
+      '<div class="captcha-header">' +
+        '<b>請選取所有包含「甜蜜記憶與熊熊特徵」的圖片：</b>' +
+      '</div>' +
+      '<div class="captcha-grid">' + gridHtml + '</div>' +
+      '<button class="btn ok" onclick="verifyCaptcha()">[ 提交驗證 (VERIFY) ]</button>' +
+      '<div id="fb"></div>' +
+    '</div>'
+  );
+}
+
+function toggleCaptcha(id) {
+  var idx = captchaSelected.indexOf(id);
+  if (idx === -1) {
+    captchaSelected.push(id);
+  } else {
+    captchaSelected.splice(idx, 1);
+  }
+  renderCaptcha();
+}
+
+function verifyCaptcha() {
+  var fb = document.getElementById('fb');
+  var isCorrect = true;
+
+  // 檢查是否所有 target 都被選中，且沒有選錯 non-target
+  for (var i = 0; i < captchaPhotos.length; i++) {
+    var p = captchaPhotos[i];
+    var isSel = captchaSelected.indexOf(p.id) !== -1;
+    if (p.isTarget && !isSel) isCorrect = false;
+    if (!p.isTarget && isSel) isCorrect = false;
+  }
+
+  if (isCorrect) {
+    fb.className = 'feedback good';
+    fb.innerHTML = 'VERIFIED! 人類身分與真愛記憶驗證成功！<br><button class="btn ok" style="margin-top:10px;" onclick="level6()">[ 進入 Level 6 ]</button>';
+  } else {
+    fb.className = 'feedback bad';
+    fb.innerHTML = '驗證失敗！選取項目包含無關物品或遺漏了甜蜜記憶，請重新選擇。<br><button class="btn pink" style="margin-top:10px;" onclick="level5()">[ 重試驗證 ]</button>';
+  }
+}
+// --- LEVEL 6 ---
+function level6() {
+  setStatus("STAGE 06", "var(--line)");
   render(
     '<div>' +
       '<div class="kicker">LEVEL 05 // 未來協定</div>' +
