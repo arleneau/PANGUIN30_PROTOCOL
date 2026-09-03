@@ -68,13 +68,24 @@ body::before {
 
 .header {
   width: 100%; border: 1px solid rgba(0, 243, 255, 0.3); background: rgba(6, 13, 23, 0.85);
-  backdrop-filter: blur(8px); padding: 10px 14px;
+  backdrop-filter: blur(8px); padding: 8px 12px;
   display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--muted);
   border-radius: 8px; margin-bottom: 12px;
   box-shadow: 0 0 15px rgba(0, 243, 255, 0.15);
 }
 .brand { color: var(--line); font-weight: bold; letter-spacing: 1px; text-shadow: 0 0 8px var(--line); }
 .status { color: var(--ok); font-weight: bold; text-shadow: 0 0 8px var(--ok); }
+
+/* 音樂按鈕樣式 */
+.music-btn {
+  background: rgba(255, 0, 127, 0.15); border: 1px solid var(--pink); color: #fff;
+  padding: 4px 8px; border-radius: 4px; font-size: 10px; cursor: pointer;
+  transition: all 0.2s; box-shadow: 0 0 8px rgba(255, 0, 127, 0.3);
+}
+.music-btn.playing {
+  background: rgba(0, 255, 157, 0.15); border-color: var(--ok); color: var(--ok);
+  box-shadow: 0 0 8px rgba(0, 255, 157, 0.3);
+}
 
 .screen {
   width: 100%; border: 1px solid rgba(255, 0, 127, 0.4); background: var(--panel);
@@ -224,7 +235,6 @@ p { line-height: 1.6; margin: 10px 0; font-size: 14px; }
 }
 .letter-highlight { color: var(--gold); background: rgba(255, 230, 109, 0.12); padding: 2px 6px; border-radius: 4px; font-weight: bold; text-shadow: 0 0 5px rgba(255, 230, 109, 0.5); }
 
-/* 生日證書徽章 */
 .cert-badge {
   margin: 15px auto; padding: 10px 20px; border: 2px double var(--gold);
   border-radius: 30px; display: inline-flex; align-items: center; gap: 8px;
@@ -235,19 +245,52 @@ p { line-height: 1.6; margin: 10px 0; font-size: 14px; }
 </head>
 <body>
 
+<!-- 背景音樂 Audio 標籤 -->
+<audio id="bgm" loop preload="auto">
+  <!-- 免費 Synthwave 氛圍音樂鏈結 -->
+  <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=synthwave-80s-110045.mp3" type="audio/mpeg">
+</audio>
+
 <!-- 賽博朋克透視網格動畫背景 -->
 <div class="grid-bg"><div class="grid-plane"></div></div>
 
 <div class="wrap">
   <div class="header">
-    <span class="brand">PROJECT_PANGUIN // V2026</span>
-    <span class="status" id="status">SYSTEM READY</span>
+    <span class="brand">PROJECT_PANGUIN</span>
+    <button class="music-btn" id="musicToggle" onclick="toggleMusic()">🎵 BGM: OFF</button>
+    <span class="status" id="status">ONLINE</span>
   </div>
   <main class="screen" id="app"></main>
 </div>
 
 <script>
 var app, statusEl, clickCount = 0;
+var bgm = document.getElementById('bgm');
+var musicBtn = document.getElementById('musicToggle');
+var isPlaying = false;
+
+// 播放/暫停背景音樂功能
+function toggleMusic(forcePlay) {
+  if (!bgm) return;
+  if (forcePlay || !isPlaying) {
+    bgm.play().then(function() {
+      isPlaying = true;
+      if (musicBtn) {
+        musicBtn.textContent = '🎵 BGM: ON';
+        musicBtn.classList.add('playing');
+      }
+    }).catch(function(e) {
+      console.log('Autoplay blocked:', e);
+    });
+  } else {
+    bgm.pause();
+    isPlaying = false;
+    if (musicBtn) {
+      musicBtn.textContent = '🎵 BGM: OFF';
+      musicBtn.classList.remove('playing');
+    }
+  }
+}
 
 function setStatus(text, color) {
   if (statusEl) {
@@ -284,14 +327,19 @@ function start() {
         '<div>SECURITY CLEARANCE: LEVEL 5</div>' +
         '<div>OBJECTIVE: UNLOCK THE 30TH CORE</div>' +
       '</div>' +
-      '<p style="text-align:center;">偵測到來自「企鵝的未婚妻」的加密封包。這是一份專屬於你哋雙方嘅系統測試驗證。</p>' +
+      '<p style="text-align:center;">偵測到來自「企鵝的未婚妻」的加密封包。這是一份專屬你哋雙方嘅系統測試驗證。</p>' +
       '<p class="muted" style="text-align:center;">備註：請確保附近有熊熊陪同，或準備好接受高濃度的回憶連線。</p>' +
     '</div>' +
     '<div style="margin-top:15px;">' +
-      '<button class="btn" onclick="level1()">[ 進入系統解密 ]</button>' +
+      '<button class="btn" onclick="startDecryption()">[ 進入系統解密 ]</button>' +
       '<button class="btn pink" onclick="inspectCore()">[ 檢視系統核心 ]</button>' +
     '</div>'
   );
+}
+
+function startDecryption() {
+  toggleMusic(true); // 使用者點擊時自動開啟音樂
+  level1();
 }
 
 function inspectCore() {
@@ -300,8 +348,8 @@ function inspectCore() {
       '<div class="kicker">SYSTEM INFRASTRUCTURE</div>' +
       '<h2>核心數據分析</h2>' +
       '<div class="terminal">' +
-        '> 玩家（企鵝）：玩拜拜肉 + Talk Shit + 忠誠大狗 100%<br><br>' +
-        '> 寄件人（熊熊）：貓系 + 咬咬技能 + 偶爾內耗 100%<br><br>' +
+        '> 玩家（企鵝）：犬系 + 摸頭必殺技 + 玩拜拜肉 + Talk Shit 100%<br><br>' +
+        '> 寄件人（熊熊）：貓系 + 咬咬必殺技 + 貓貓合唱 + 偶爾內耗 100%<br><br>' +
         '> 當前關係狀態：未婚夫妻 (ENGAGED)<br><br>' +
         '> 核心連結：無可替代' +
       '</div>' +
@@ -314,7 +362,7 @@ function inspectCore() {
 
 // --- LEVEL 1 ---
 function level1() {
-  setStatus("STAGE 01: VOICE CHECK", "var(--line)");
+  setStatus("STAGE 01", "var(--line)");
   render(
     '<div>' +
       '<div class="kicker">LEVEL 01 // 語音情境密碼</div>' +
@@ -323,7 +371,7 @@ function level1() {
       '<div class="options">' +
         '<button class="btn option" onclick="ans1(false, \'錯誤。熊熊並非要進行商業握手。\')">A. 想跟你進行嚴肅的商務握手</button>' +
         '<button class="btn option" onclick="ans1(true, \'驗證成功！這是完美的熊熊解讀。\')">B. 準備要咬一口 / 討抱抱</button>' +
-        '<button class="btn option" onclick="ans1(false, \'系統錯誤。熊熊很少會主動討論微積分。\')">C. 示意你講解高等數學題目</button>' +
+        '<button class="btn option" onclick="ans1(false, \'系統錯誤。熊熊從不討論微積分。她微積分攞 D \')">C. 示意你講解高等數學題目</button>' +
         '<button class="btn option" onclick="ans1(false, \'匹配失敗。這個指令不符合熊熊行為學。\')">D. 提醒你該去清理貓砂了</button>' +
       '</div>' +
       '<div id="fb"></div>' +
@@ -346,7 +394,7 @@ function ans1(correct, msg) {
 
 // --- LEVEL 2 ---
 function level2() {
-  setStatus("STAGE 02: CHAT LOGS", "var(--pink)");
+  setStatus("STAGE 02", "var(--pink)");
   render(
     '<div>' +
       '<div class="kicker">LEVEL 02 // 日常對話鏈重構</div>' +
@@ -404,7 +452,7 @@ function shuffle(array) {
 }
 
 function level3() {
-  setStatus("STAGE 03: TIMELINE", "var(--gold)");
+  setStatus("STAGE 03", "var(--gold)");
   userOrder = [];
   displayOrder = shuffle(fragments);
   renderTimeline();
@@ -494,7 +542,7 @@ function verifyTimeline() {
 
 // --- LEVEL 4 ---
 function level4() {
-  setStatus("STAGE 04: SYNC TEST", "var(--pink)");
+  setStatus("STAGE 04", "var(--pink)");
   clickCount = 0;
   render(
     '<div>' +
@@ -531,7 +579,7 @@ function chargeSync() {
 
 // --- LEVEL 5 ---
 function level5() {
-  setStatus("STAGE 05: FUTURE ARCHIVE", "var(--line)");
+  setStatus("STAGE 05", "var(--line)");
   render(
     '<div>' +
       '<div class="kicker">LEVEL 05 // 未來協定</div>' +
